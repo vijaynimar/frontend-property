@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
 const styles = {
   container: {
@@ -21,13 +22,6 @@ const styles = {
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
   },
-  label: {
-    display: "block",
-    fontSize: "1rem",
-    fontWeight: "600",
-    marginBottom: "8px",
-    color: "#2d3748",
-  },
   input: {
     width: "100%",
     padding: "8px 12px",
@@ -36,32 +30,7 @@ const styles = {
     fontSize: "1rem",
     boxSizing: "border-box",
   },
-  suggestionContainer: {
-    position: "relative",
-  },
-  suggestions: {
-    position: "absolute",
-    top: "100%",
-    left: 0,
-    right: 0,
-    background: "white",
-    border: "1px solid #e2e8f0",
-    borderRadius: "6px",
-    marginTop: "4px",
-    padding: 0,
-    listStyle: "none",
-    maxHeight: "200px",
-    overflowY: "auto",
-    zIndex: 10,
-    boxSizing: "border-box",
-  },
-  suggestionItem: {
-    padding: "8px 12px",
-    cursor: "pointer",
-    ":hover": {
-      backgroundColor: "#f7fafc",
-    },
-  },
+  
   propertiesGrid: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
@@ -75,7 +44,7 @@ const styles = {
     backgroundColor: "white",
     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
     transition: "transform 0.2s",
-    display: "flex", 
+    display: "flex",
     flexDirection: "column",
   },
   imageContainer: {
@@ -142,8 +111,11 @@ const styles = {
 };
 
 const PropertyCard = React.memo(({ property }) => {
-  const { title, location, bedrooms, bathrooms, area, price, image, rating } = property;
-
+  const navigate = useNavigate();
+  const handleViewDetails = () => {
+    navigate(`/property/${property.id}`, { state: { property } });
+  };
+  const {rating}=property
   const renderStars = useMemo(() => {
     return (rating) => {
       const stars = [];
@@ -159,33 +131,26 @@ const PropertyCard = React.memo(({ property }) => {
       return stars;
     };
   }, []);
-
   return (
     <div style={styles.propertyCard}>
       <div style={styles.imageContainer}>
-        <img src={image} alt={title} style={styles.image} />
-        <div style={styles.priceTag}>${price.toLocaleString()}</div>
+        <img src={property.image} alt={property.title} style={styles.image} />
+        <div style={styles.priceTag}>${property.price.toLocaleString()}</div>
       </div>
       <div style={styles.content}>
-        <h3 style={styles.title}>{title}</h3>
-        <p style={styles.location}>{location}</p>
+        <h3 style={styles.title}>{property.title}</h3>
+        <p style={styles.location}>{property.location}</p>
         <div style={styles.details}>
-          <span>{bedrooms} Beds</span>
-          <span>|</span>
-          <span>{bathrooms} Baths</span>
-          <span>|</span>
-          <span>{area} sq ft</span>
+        <span>{property.bedrooms} Beds</span>
+        <span>|</span>
+        <span>{property.bathrooms} Baths</span>
+        <span>|</span>
+        <span>{property.area} sq ft</span>
         </div>
         <div style={styles.rating}>
-          {renderStars(rating)} <span>({rating})</span>
+          {renderStars(rating)} <span>({property.rating})</span>
         </div>
-        <button
-          style={styles.viewButton}
-          onMouseOver={(e) => (e.target.style.backgroundColor = '#3182ce')}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#4299e1')}
-        >
-          View Details
-        </button>
+        <button onClick={handleViewDetails} style={styles.viewButton}>View Details</button>
       </div>
     </div>
   );
@@ -199,11 +164,6 @@ const Property = () => {
     location: "",
     title: "",
     minRating: 0,
-  });
-
-  const [suggestions, setSuggestions] = useState({
-    location: [],
-    title: [],
   });
 
   const properties = useMemo(() => [
@@ -414,172 +374,52 @@ const Property = () => {
     },
   ], []);
 
-  const generateSuggestions = useCallback((key, value) => {
-    if (!value) {
-      return [];
-    }
-    const lowercaseValue = value.toLowerCase();
-    const uniqueSuggestions = new Set(
-      properties
-        .map((property) => property[key])
-        .filter((item) => 
-          item.toLowerCase().includes(lowercaseValue) && 
-          item.toLowerCase() !== lowercaseValue
-        )
-    );
-    return Array.from(uniqueSuggestions).slice(0, 5);
-  }, [properties]);
-
-  const filteredProperties = useMemo(() => {
-    return properties.filter(
-      (property) =>
-        (filters.title === "" || 
-          property.title.toLowerCase().includes(filters.title.toLowerCase())) &&
-        (filters.location === "" || 
-          property.location.toLowerCase().includes(filters.location.toLowerCase())) &&
-        property.price >= filters.minPrice &&
-        property.price <= filters.maxPrice &&
-        (filters.bedrooms === "" || 
-          property.bedrooms === parseInt(filters.bedrooms)) &&
-        property.rating >= filters.minRating
-    );
-  }, [filters, properties]);
-
-  const handleFilterChange = useCallback((key, value) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
-
-    if (key === "location" || key === "title") {
-      const newSuggestions = generateSuggestions(key, value);
-      setSuggestions((prev) => ({ ...prev, [key]: newSuggestions }));
-    }
-  }, [generateSuggestions]);
-
-  const handleSuggestionClick = (type, value) => {
-    setFilters((prev) => ({ ...prev, [type]: value }));
-    setSuggestions((prev) => ({ ...prev, [type]: [] }));
-  };
-
   return (
     <div style={styles.container}>
       <div style={styles.filters}>
-        {/* Title Filter with Suggestions */}
-          <div style={styles.filterGroup}>
-          <label style={styles.label}>Search by Title</label>
-          <div style={styles.suggestionContainer}>
-            <input
-              type="text"
-              placeholder="Enter property title..."
-              value={filters.title}
-              onChange={(e) => handleFilterChange("title", e.target.value)}
-              style={styles.input}
-            />
-            {suggestions.title.length > 0 && (
-              <ul style={styles.suggestions}>
-                {suggestions.title.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    style={styles.suggestionItem}
-                    onClick={() => handleSuggestionClick("title", suggestion)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-        {/* Location Filter with Suggestions */}
-          <div style={styles.filterGroup}>
-          <label style={styles.label}>Search by Location</label>
-          <div style={styles.suggestionContainer}>
-            <input
-              type="text"
-              placeholder="Enter location..."
-              value={filters.location}
-              onChange={(e) => handleFilterChange("location", e.target.value)}
-              style={styles.input}
-            />
-            {suggestions.location.length > 0 && (
-              <ul style={styles.suggestions}>
-                {suggestions.location.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    style={styles.suggestionItem}
-                    onClick={() => handleSuggestionClick("location", suggestion)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        </div>
-
-        {/* Bedrooms Filter */}
         <div style={styles.filterGroup}>
-          
-          <label style={styles.label}>Bedrooms</label>
-          <select
-            value={filters.bedrooms}
-            onChange={(e) => handleFilterChange("bedrooms", e.target.value)}
-            style={styles.input}
-          >
+          <label>Search by Title</label>
+          <input type="text" value={filters.title} onChange={(e) => setFilters({ ...filters, title: e.target.value })} style={styles.input} />
+        </div>
+        <div style={styles.filterGroup}>
+          <label>Search by Location</label>
+          <input type="text" value={filters.location} onChange={(e) => setFilters({ ...filters, location: e.target.value })} style={styles.input} />
+        </div>
+        <div style={styles.filterGroup}>
+          <label>Bedrooms</label>
+          <select value={filters.bedrooms} onChange={(e) => setFilters({ ...filters, bedrooms: e.target.value })} style={styles.input}>
             <option value="">Any</option>
             {[1, 2, 3, 4, 5].map((num) => (
-              <option key={num} value={num}>
-                {num} {num === 1 ? "Bedroom" : "Bedrooms"}
-              </option>
+              <option key={num} value={num}>{num} {num === 1 ? "Bedroom" : "Bedrooms"}</option>
             ))}
           </select>
         </div>
-
-
-      </div>
-      <div style={styles.filters}>
-                  {/* Price Range Filter */}
-                  <div style={styles.filterGroup}>
-          <label style={styles.label}>Price Range</label>
-          <div>
-            <input
-              type="range"
-              min="0"
-              max="5000000"
-              value={filters.minPrice}
-              onChange={(e) =>
-                handleFilterChange("minPrice", Number(e.target.value))
-              }
-              style={styles.input}
-            />
-            <span>
-              ${filters.minPrice.toLocaleString()} - $
-              {filters.maxPrice.toLocaleString()}
-            </span>
-          </div>
+        <div style={styles.filterGroup}>
+          <label>Price Range</label>
+          <input type="range" min="0" max="5000000" value={filters.minPrice} onChange={(e) => setFilters({ ...filters, minPrice: Number(e.target.value) })} style={styles.input} />
+          <span>${filters.minPrice.toLocaleString()} - ${filters.maxPrice.toLocaleString()}</span>
         </div>
-      {/* Rating Filter */}
-      <div style={styles.filterGroup}>
-        <label style={styles.label}>Minimum Rating</label>
-        <input
-          type="range"
-          min="0"
-          max="5"
-          step="0.1"
-          value={filters.minRating}
-          onChange={(e) =>
-            handleFilterChange("minRating", Number(e.target.value))
-          }
-          style={styles.input}
-        />
-        <span>{filters.minRating} Stars</span>
+        <div style={styles.filterGroup}>
+          <label>Minimum Rating</label>
+          <input type="range" min="0" max="5" step="0.1" value={filters.minRating} onChange={(e) => setFilters({ ...filters, minRating: Number(e.target.value) })} style={styles.input} />
+          <span>{filters.minRating} Stars</span>
+        </div>
       </div>
-      </div>
-
-      {/* Properties Grid */}
       <div style={styles.propertiesGrid}>
-        {filteredProperties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
-        ))}
-      </div>
+  {properties
+    .filter((property) => 
+      property.price >= filters.minPrice &&
+      property.price <= filters.maxPrice &&
+      property.rating >= filters.minRating &&
+      (filters.bedrooms === "" || property.bedrooms === Number(filters.bedrooms)) &&
+      (filters.location === "" || property.location.toLowerCase().includes(filters.location.toLowerCase())) &&
+      (filters.title === "" || property.title.toLowerCase().includes(filters.title.toLowerCase()))
+    )
+    .map((property) => (
+      <PropertyCard key={property.id} property={property} />
+    ))}
+</div>
+
     </div>
   );
 };

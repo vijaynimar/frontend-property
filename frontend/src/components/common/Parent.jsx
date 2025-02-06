@@ -3,6 +3,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "../Home";
 import Property from "../Property";
+import PropertyDetails from "../PropertyDetails";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -10,14 +11,15 @@ const Parent = () => {
   return (
     <Router>
       <div style={styles.container}>
-        <Navbar/>
+        <Navbar />
         <div style={styles.content}>
           <Routes>
-            <Route path="/" element={<Home/>} />
+            <Route path="/" element={<Home />} />
             <Route path="/properties" element={<Property />} />
+            <Route path="/property/:id" element={<PropertyDetails />} />
           </Routes>
         </div>
-        <Footer/>
+        <Footer />
       </div>
     </Router>
   );

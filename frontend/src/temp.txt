@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useCallback } from "react";
-import home from "../public/home.webp";
 
 const styles = {
   container: {
@@ -7,33 +6,7 @@ const styles = {
     margin: "0 auto",
     padding: "24px",
     backgroundColor: "#f7fafc",
-    boxSizing: "border-box", 
-  },
-  header: {
-    textAlign: "center",
-    marginBottom: "40px",
-    backgroundImage: `url(${home})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    height: "50vh",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: "black",
-    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
-    overflow: "hidden",
-  },
-  headerTitle: {
-    fontSize: "2.5rem",
-    marginBottom: "8px",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-  },
-  headerSubtitle: {
-    fontSize: "1.1rem",
+    boxSizing: "border-box",
   },
   filters: {
     display: "grid",
@@ -47,7 +20,6 @@ const styles = {
     padding: "16px",
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    overflow: "hidden",
   },
   label: {
     display: "block",
@@ -89,10 +61,6 @@ const styles = {
     ":hover": {
       backgroundColor: "#f7fafc",
     },
-  },
-  ratingFilter: {
-    textAlign: "center",
-    marginBottom: "32px",
   },
   propertiesGrid: {
     display: "grid",
@@ -193,12 +161,7 @@ const PropertyCard = React.memo(({ property }) => {
   }, []);
 
   return (
-    <div
-      style={{
-        ...styles.propertyCard,
-        ":hover": { transform: "translateY(-4px)" },
-      }}
-    >
+    <div style={styles.propertyCard}>
       <div style={styles.imageContainer}>
         <img src={image} alt={title} style={styles.image} />
         <div style={styles.priceTag}>${price.toLocaleString()}</div>
@@ -207,8 +170,10 @@ const PropertyCard = React.memo(({ property }) => {
         <h3 style={styles.title}>{title}</h3>
         <p style={styles.location}>{location}</p>
         <div style={styles.details}>
-          <span>{bedrooms} beds</span>
-          <span>{bathrooms} baths</span>
+          <span>{bedrooms} Beds</span>
+          <span>|</span>
+          <span>{bathrooms} Baths</span>
+          <span>|</span>
           <span>{area} sq ft</span>
         </div>
         <div style={styles.rating}>
@@ -216,8 +181,8 @@ const PropertyCard = React.memo(({ property }) => {
         </div>
         <button
           style={styles.viewButton}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#3182ce")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#4299e1")}
+          onMouseOver={(e) => (e.target.style.backgroundColor = '#3182ce')}
+          onMouseOut={(e) => (e.target.style.backgroundColor = '#4299e1')}
         >
           View Details
         </button>
@@ -226,7 +191,7 @@ const PropertyCard = React.memo(({ property }) => {
   );
 });
 
-const PropertyListing = () => {
+const Property = () => {
   const [filters, setFilters] = useState({
     minPrice: 0,
     maxPrice: 5000000,
@@ -449,18 +414,33 @@ const PropertyListing = () => {
     },
   ], []);
 
+  const generateSuggestions = useCallback((key, value) => {
+    if (!value) {
+      return [];
+    }
+    const lowercaseValue = value.toLowerCase();
+    const uniqueSuggestions = new Set(
+      properties
+        .map((property) => property[key])
+        .filter((item) => 
+          item.toLowerCase().includes(lowercaseValue) && 
+          item.toLowerCase() !== lowercaseValue
+        )
+    );
+    return Array.from(uniqueSuggestions).slice(0, 5);
+  }, [properties]);
+
   const filteredProperties = useMemo(() => {
     return properties.filter(
       (property) =>
-        (property.title.toLowerCase().includes(filters.title.toLowerCase()) ||
-          property.location
-            .toLowerCase()
-            .includes(filters.location.toLowerCase())) &&
+        (filters.title === "" || 
+          property.title.toLowerCase().includes(filters.title.toLowerCase())) &&
+        (filters.location === "" || 
+          property.location.toLowerCase().includes(filters.location.toLowerCase())) &&
         property.price >= filters.minPrice &&
         property.price <= filters.maxPrice &&
-        (filters.bedrooms
-          ? property.bedrooms === parseInt(filters.bedrooms)
-          : true) &&
+        (filters.bedrooms === "" || 
+          property.bedrooms === parseInt(filters.bedrooms)) &&
         property.rating >= filters.minRating
     );
   }, [filters, properties]);
@@ -469,12 +449,10 @@ const PropertyListing = () => {
     setFilters((prev) => ({ ...prev, [key]: value }));
 
     if (key === "location" || key === "title") {
-      const newSuggestions = properties
-        .map((property) => property[key])
-        .filter((item) => item.toLowerCase().includes(value.toLowerCase()));
+      const newSuggestions = generateSuggestions(key, value);
       setSuggestions((prev) => ({ ...prev, [key]: newSuggestions }));
     }
-  }, [properties]);
+  }, [generateSuggestions]);
 
   const handleSuggestionClick = (type, value) => {
     setFilters((prev) => ({ ...prev, [type]: value }));
@@ -483,66 +461,9 @@ const PropertyListing = () => {
 
   return (
     <div style={styles.container}>
-      <div style={{ backgroundImage: `url(${home})` }}>
-        <header style={styles.header}>
-          <h1 style={styles.headerTitle}>Find Your Dream Home</h1>
-          <p style={styles.headerSubtitle}>
-            Discover the perfect property that matches your lifestyle
-          </p>
-          <button
-            style={{
-              backgroundColor: "#0056b3",
-              color: "white",
-              padding: "12px 24px",
-              fontSize: "18px",
-              fontWeight: "bold",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-            }}
-          >
-            Sign Up
-          </button>
-        </header>
-      </div>
       <div style={styles.filters}>
-        <div style={styles.filterGroup}>
-          <label style={styles.label}>Price Range</label>
-          <div>
-            <input
-              type="range"
-              min="0"
-              max="5000000"
-              value={filters.minPrice}
-              onChange={(e) =>
-                handleFilterChange("minPrice", Number(e.target.value))
-              }
-              style={styles.input}
-            />
-            <span>
-              ${filters.minPrice.toLocaleString()} - $
-              {filters.maxPrice.toLocaleString()}
-            </span>
-          </div>
-        </div>
-
-        <div style={styles.filterGroup}>
-          <label style={styles.label}>Bedrooms</label>
-          <select
-            value={filters.bedrooms}
-            onChange={(e) => handleFilterChange("bedrooms", e.target.value)}
-            style={styles.input}
-          >
-            <option value="">Any</option>
-            {[1, 2, 3, 4, 5].map((num) => (
-              <option key={num} value={num}>
-                {num} {num === 1 ? "Bedroom" : "Bedrooms"}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div style={styles.filterGroup}>
+        {/* Title Filter with Suggestions */}
+          <div style={styles.filterGroup}>
           <label style={styles.label}>Search by Title</label>
           <div style={styles.suggestionContainer}>
             <input
@@ -567,9 +488,76 @@ const PropertyListing = () => {
             )}
           </div>
         </div>
-      </div>
+        {/* Location Filter with Suggestions */}
+          <div style={styles.filterGroup}>
+          <label style={styles.label}>Search by Location</label>
+          <div style={styles.suggestionContainer}>
+            <input
+              type="text"
+              placeholder="Enter location..."
+              value={filters.location}
+              onChange={(e) => handleFilterChange("location", e.target.value)}
+              style={styles.input}
+            />
+            {suggestions.location.length > 0 && (
+              <ul style={styles.suggestions}>
+                {suggestions.location.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    style={styles.suggestionItem}
+                    onClick={() => handleSuggestionClick("location", suggestion)}
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
 
-      <div style={styles.ratingFilter}>
+        {/* Bedrooms Filter */}
+        <div style={styles.filterGroup}>
+          
+          <label style={styles.label}>Bedrooms</label>
+          <select
+            value={filters.bedrooms}
+            onChange={(e) => handleFilterChange("bedrooms", e.target.value)}
+            style={styles.input}
+          >
+            <option value="">Any</option>
+            {[1, 2, 3, 4, 5].map((num) => (
+              <option key={num} value={num}>
+                {num} {num === 1 ? "Bedroom" : "Bedrooms"}
+              </option>
+            ))}
+          </select>
+        </div>
+
+
+      </div>
+      <div style={styles.filters}>
+                  {/* Price Range Filter */}
+                  <div style={styles.filterGroup}>
+          <label style={styles.label}>Price Range</label>
+          <div>
+            <input
+              type="range"
+              min="0"
+              max="5000000"
+              value={filters.minPrice}
+              onChange={(e) =>
+                handleFilterChange("minPrice", Number(e.target.value))
+              }
+              style={styles.input}
+            />
+            <span>
+              ${filters.minPrice.toLocaleString()} - $
+              {filters.maxPrice.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      {/* Rating Filter */}
+      <div style={styles.filterGroup}>
         <label style={styles.label}>Minimum Rating</label>
         <input
           type="range"
@@ -584,7 +572,9 @@ const PropertyListing = () => {
         />
         <span>{filters.minRating} Stars</span>
       </div>
+      </div>
 
+      {/* Properties Grid */}
       <div style={styles.propertiesGrid}>
         {filteredProperties.map((property) => (
           <PropertyCard key={property.id} property={property} />
@@ -594,4 +584,4 @@ const PropertyListing = () => {
   );
 };
 
-export default PropertyListing;
+export default Property;
