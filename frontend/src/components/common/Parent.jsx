@@ -28,6 +28,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     minHeight: "100vh",
+    fontFamily: "sans-serif"
   },
   content: {
     flex: 1,

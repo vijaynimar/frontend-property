@@ -91,7 +91,9 @@ const PropertyCard = React.memo(({ property }) => {
         <p style={cardStyles.location}>{location}</p>
         <div style={cardStyles.details}>
           <span>{bedrooms} Beds</span>
+          <span>|</span>
           <span>{bathrooms} Baths</span>
+          <span>|</span>
           <span>{area} sq ft</span>
         </div>
         <div style={cardStyles.rating}>
@@ -345,17 +347,49 @@ const Home = () => {
   ], []);
 
   return (
-    <div style={styles.container}>
+    <>
       <header style={styles.header}>
         <h1>Find Your Dream Home</h1>
         <p>Discover the perfect property that matches your lifestyle</p>
+        <div style={{display:"flex",width:"250px",justifyContent:"space-between"}}>
+              <button
+                style={{
+                  backgroundColor: "#0056b3",
+                  color: "white",
+                  padding: "12px 24px",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer"
+                }}
+              >
+                Sign Up
+              </button>
+              <button
+                style={{
+                  backgroundColor: "#0056b3",
+                  color: "white",
+                  padding: "12px 24px",
+                  fontSize: "18px",
+                  fontWeight: "bold",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer"
+                }}
+              >
+                Login
+              </button>
+        </div>
       </header>
-      <div style={styles.propertiesGrid}>
-        {properties.map((property) => (
-          <PropertyCard key={property.id} property={property} />
-        ))}
+      <div style={styles.container}>
+        <div style={styles.propertiesGrid}>
+          {properties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
