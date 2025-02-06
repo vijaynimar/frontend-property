@@ -1,255 +1,12 @@
 import React, { useState, useMemo, useCallback } from "react";
-import home from "../../public/home.webp";
-import logo from "../../public/logo.png"
 
-// Navbar Component
-const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const navStyles = {
-    navbar: {
-      backgroundColor: 'white',
-      padding: '1rem 2rem',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      position: 'sticky',
-      top: 0,
-      zIndex: 1000,
-    },
-    navContent: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      maxWidth: '1200px',
-      margin: '0 auto',
-    },
-    logo: {
-      fontSize: '1.5rem',
-      fontWeight: 'bold',
-      color: '#4299e1',
-      textDecoration: 'none',
-      display:"flex",
-      alignItems:"center"
-    },
-    navLinks: {
-      display: 'flex',
-      gap: '2rem',
-      alignItems: 'center',
-    },
-    link: {
-      color: '#4a5568',
-      textDecoration: 'none',
-      fontSize: '1rem',
-      fontWeight: '500',
-      transition: 'color 0.2s',
-      cursor: 'pointer',
-    },
-    button: {
-      backgroundColor: '#4299e1',
-      color: 'white',
-      padding: '0.5rem 1rem',
-      borderRadius: '0.375rem',
-      border: 'none',
-      cursor: 'pointer',
-      fontSize: '0.875rem',
-      fontWeight: '500',
-      transition: 'background-color 0.2s',
-    },
-    menuButton: {
-      display: 'none',
-      background: 'none',
-      border: 'none',
-      fontSize: '1.5rem',
-      cursor: 'pointer',
-      padding: '0.5rem',
-      color: '#4a5568',
-    },
-    '@media (max-width: 768px)': {
-      menuButton: {
-        display: 'block',
-      },
-      navLinks: {
-        display: 'none',
-      },
-      navLinksMobile: {
-        display: 'flex',
-        flexDirection: 'column',
-        position: 'absolute',
-        top: '100%',
-        left: 0,
-        right: 0,
-        backgroundColor: 'white',
-        padding: '1rem',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        gap: '1rem',
-      },
-    },
-  };
-
-  return (
-    <nav style={navStyles.navbar}>
-      <div style={navStyles.navContent}>
-        <a href="/" style={navStyles.logo}>
-          <img src={logo} style={{width:"50px"}}/>
-          HomeHarbor
-        </a>
-        <button 
-          style={navStyles.menuButton}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          ☰
-        </button>
-        <div style={isMenuOpen ? navStyles.navLinksMobile : navStyles.navLinks}>
-          <a href="/" style={navStyles.link}>Home</a>
-          <a href="/properties" style={navStyles.link}>Properties</a>
-          <a href="/agents" style={navStyles.link}>Agents</a>
-          <a href="/about" style={navStyles.link}>About</a>
-          <a href="/contact" style={navStyles.link}>Contact</a>
-          <button 
-            style={navStyles.button}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#3182ce'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#4299e1'}
-          >
-            Get Started
-          </button>
-        </div>
-      </div>
-    </nav>
-  );
-};
-
-// Footer Component
-const Footer = () => {
-  const footerStyles = {
-    footer: {
-      backgroundColor: '#2d3748',
-      color: 'white',
-      padding: '4rem 2rem',
-      marginTop: '4rem',
-    },
-    content: {
-      maxWidth: '1200px',
-      margin: '0 auto',
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-      gap: '2rem',
-    },
-    section: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: '1rem',
-    },
-    title: {
-      fontSize: '1.25rem',
-      fontWeight: 'bold',
-      marginBottom: '1rem',
-    },
-    link: {
-      color: '#a0aec0',
-      textDecoration: 'none',
-      fontSize: '0.875rem',
-      transition: 'color 0.2s',
-    },
-    socialLinks: {
-      display: 'flex',
-      gap: '1rem',
-      marginTop: '1rem',
-    },
-    socialIcon: {
-      width: '24px',
-      height: '24px',
-      fill: '#a0aec0',
-    },
-    bottom: {
-      borderTop: '1px solid #4a5568',
-      marginTop: '2rem',
-      paddingTop: '2rem',
-      textAlign: 'center',
-      color: '#a0aec0',
-      fontSize: '0.875rem',
-    },
-  };
-
-  return (
-    <footer style={footerStyles.footer}>
-      <div style={footerStyles.content}>
-        <div style={footerStyles.section}>
-          <h3 style={footerStyles.title}>DreamHome</h3>
-          <p style={{ color: '#a0aec0', fontSize: '0.875rem' }}>
-            Find your perfect home with our extensive listing of properties across the country.
-          </p>
-          <div style={footerStyles.socialLinks}>
-            <a href="#" style={footerStyles.link}>Facebook</a>
-            <a href="#" style={footerStyles.link}>Twitter</a>
-            <a href="#" style={footerStyles.link}>Instagram</a>
-          </div>
-        </div>
-        
-        <div style={footerStyles.section}>
-          <h3 style={footerStyles.title}>Quick Links</h3>
-          <a href="/properties" style={footerStyles.link}>Properties</a>
-          <a href="/agents" style={footerStyles.link}>Agents</a>
-          <a href="/about" style={footerStyles.link}>About Us</a>
-          <a href="/contact" style={footerStyles.link}>Contact</a>
-        </div>
-        
-        <div style={footerStyles.section}>
-          <h3 style={footerStyles.title}>Resources</h3>
-          <a href="#" style={footerStyles.link}>Blog</a>
-          <a href="#" style={footerStyles.link}>Market Updates</a>
-          <a href="#" style={footerStyles.link}>Buying Guide</a>
-          <a href="#" style={footerStyles.link}>Selling Guide</a>
-        </div>
-        
-        <div style={footerStyles.section}>
-          <h3 style={footerStyles.title}>Contact Us</h3>
-          <p style={footerStyles.link}>1234 Real Estate Ave</p>
-          <p style={footerStyles.link}>New York, NY 10001</p>
-          <p style={footerStyles.link}>Phone: (555) 123-4567</p>
-          <p style={footerStyles.link}>Email: info@dreamhome.com</p>
-        </div>
-      </div>
-      
-      <div style={footerStyles.bottom}>
-        <p>© 2024 DreamHome. All rights reserved.</p>
-      </div>
-    </footer>
-  );
-};
-
-// Existing styles object
 const styles = {
   container: {
     maxWidth: "100%",
     margin: "0 auto",
     padding: "24px",
     backgroundColor: "#f7fafc",
-    boxSizing: "border-box", 
-  },
-  header: {
-    textAlign: "center",
-    marginBottom: "40px",
-    backgroundImage: `url(${home})`,
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    height: "80vh",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: "black",
-    textShadow: "2px 2px 5px rgba(0, 0, 0, 0.5)",
-    overflow: "hidden",
-  },
-  headerTitle: {
-    fontSize: "2.5rem",
-    marginBottom: "8px",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-  },
-  headerSubtitle: {
-    fontSize: "1.1rem",
+    boxSizing: "border-box",
   },
   filters: {
     display: "grid",
@@ -304,10 +61,6 @@ const styles = {
     ":hover": {
       backgroundColor: "#f7fafc",
     },
-  },
-  ratingFilter: {
-    textAlign: "center",
-    marginBottom: "32px",
   },
   propertiesGrid: {
     display: "grid",
@@ -388,7 +141,6 @@ const styles = {
   },
 };
 
-// PropertyCard Component
 const PropertyCard = React.memo(({ property }) => {
   const { title, location, bedrooms, bathrooms, area, price, image, rating } = property;
 
@@ -418,8 +170,10 @@ const PropertyCard = React.memo(({ property }) => {
         <h3 style={styles.title}>{title}</h3>
         <p style={styles.location}>{location}</p>
         <div style={styles.details}>
-          <span>{bedrooms} beds</span>
-          <span>{bathrooms} baths</span>
+          <span>{bedrooms} Beds</span>
+          <span>|</span>
+          <span>{bathrooms} Baths</span>
+          <span>|</span>
           <span>{area} sq ft</span>
         </div>
         <div style={styles.rating}>
@@ -437,9 +191,7 @@ const PropertyCard = React.memo(({ property }) => {
   );
 });
 
-// Main PropertyListing Component
 const Property = () => {
-  // ... (Keep all your existing state and handlers from the original code)
   const [filters, setFilters] = useState({
     minPrice: 0,
     maxPrice: 5000000,
@@ -708,168 +460,127 @@ const Property = () => {
   };
 
   return (
-    <>
-      <Navbar />
-      <div style={styles.container}>
-        <div style={{ backgroundImage: `url(${home})` }}>
-          <header style={styles.header}>
-            <h1 style={styles.headerTitle}>Find Your Dream Home</h1>
-            <p style={styles.headerSubtitle}>
-              Discover the perfect property that matches your lifestyle
-            </p>
-            <div style={{display:"flex",width:"250px",justifyContent:"space-between"}}>
-              <button
-                style={{
-                  backgroundColor: "#0056b3",
-                  color: "white",
-                  padding: "12px 24px",
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer"
-                }}
-              >
-                Sign Up
-              </button>
-              <button
-                style={{
-                  backgroundColor: "#0056b3",
-                  color: "white",
-                  padding: "12px 24px",
-                  fontSize: "18px",
-                  fontWeight: "bold",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer"
-                }}
-              >
-                Login
-              </button>
-            </div>
-          </header>
-        </div>
-
-        <div style={styles.filters}>
-          {/* Price Range Filter */}
+    <div style={styles.container}>
+      <div style={styles.filters}>
+        {/* Title Filter with Suggestions */}
           <div style={styles.filterGroup}>
-            <label style={styles.label}>Price Range</label>
-            <div>
-              <input
-                type="range"
-                min="0"
-                max="5000000"
-                value={filters.minPrice}
-                onChange={(e) =>
-                  handleFilterChange("minPrice", Number(e.target.value))
-                }
-                style={styles.input}
-              />
-              <span>
-                ${filters.minPrice.toLocaleString()} - $
-                {filters.maxPrice.toLocaleString()}
-              </span>
-            </div>
-          </div>
-
-          {/* Location Filter with Suggestions */}
-          <div style={styles.filterGroup}>
-            <label style={styles.label}>Location</label>
-            <div style={styles.suggestionContainer}>
-              <input
-                type="text"
-                placeholder="Enter location..."
-                value={filters.location}
-                onChange={(e) => handleFilterChange("location", e.target.value)}
-                style={styles.input}
-              />
-              {suggestions.location.length > 0 && (
-                <ul style={styles.suggestions}>
-                  {suggestions.location.map((suggestion, index) => (
-                    <li
-                      key={index}
-                      style={styles.suggestionItem}
-                      onClick={() => handleSuggestionClick("location", suggestion)}
-                    >
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-
-          {/* Bedrooms Filter */}
-          <div style={styles.filterGroup}>
-            <label style={styles.label}>Bedrooms</label>
-            <select
-              value={filters.bedrooms}
-              onChange={(e) => handleFilterChange("bedrooms", e.target.value)}
+          <label style={styles.label}>Search by Title</label>
+          <div style={styles.suggestionContainer}>
+            <input
+              type="text"
+              placeholder="Enter property title..."
+              value={filters.title}
+              onChange={(e) => handleFilterChange("title", e.target.value)}
               style={styles.input}
-            >
-              <option value="">Any</option>
-              {[1, 2, 3, 4, 5].map((num) => (
-                <option key={num} value={num}>
-                  {num} {num === 1 ? "Bedroom" : "Bedrooms"}
-                </option>
-              ))}
-            </select>
+            />
+            {suggestions.title.length > 0 && (
+              <ul style={styles.suggestions}>
+                {suggestions.title.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    style={styles.suggestionItem}
+                    onClick={() => handleSuggestionClick("title", suggestion)}
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
-
-          {/* Title Filter with Suggestions */}
+        </div>
+        {/* Location Filter with Suggestions */}
           <div style={styles.filterGroup}>
-            <label style={styles.label}>Search by Title</label>
-            <div style={styles.suggestionContainer}>
-              <input
-                type="text"
-                placeholder="Enter property title..."
-                value={filters.title}
-                onChange={(e) => handleFilterChange("title", e.target.value)}
-                style={styles.input}
-              />
-              {suggestions.title.length > 0 && (
-                <ul style={styles.suggestions}>
-                  {suggestions.title.map((suggestion, index) => (
-                    <li
-                      key={index}
-                      style={styles.suggestionItem}
-                      onClick={() => handleSuggestionClick("title", suggestion)}
-                    >
-                      {suggestion}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+          <label style={styles.label}>Search by Location</label>
+          <div style={styles.suggestionContainer}>
+            <input
+              type="text"
+              placeholder="Enter location..."
+              value={filters.location}
+              onChange={(e) => handleFilterChange("location", e.target.value)}
+              style={styles.input}
+            />
+            {suggestions.location.length > 0 && (
+              <ul style={styles.suggestions}>
+                {suggestions.location.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    style={styles.suggestionItem}
+                    onClick={() => handleSuggestionClick("location", suggestion)}
+                  >
+                    {suggestion}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
 
-        {/* Rating Filter */}
-        <div style={styles.ratingFilter}>
-          <label style={styles.label}>Minimum Rating</label>
-          <input
-            type="range"
-            min="0"
-            max="5"
-            step="0.1"
-            value={filters.minRating}
-            onChange={(e) =>
-              handleFilterChange("minRating", Number(e.target.value))
-            }
+        {/* Bedrooms Filter */}
+        <div style={styles.filterGroup}>
+          
+          <label style={styles.label}>Bedrooms</label>
+          <select
+            value={filters.bedrooms}
+            onChange={(e) => handleFilterChange("bedrooms", e.target.value)}
             style={styles.input}
-          />
-          <span>{filters.minRating} Stars</span>
+          >
+            <option value="">Any</option>
+            {[1, 2, 3, 4, 5].map((num) => (
+              <option key={num} value={num}>
+                {num} {num === 1 ? "Bedroom" : "Bedrooms"}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Properties Grid */}
-        <div style={styles.propertiesGrid}>
-          {filteredProperties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-        </div>
+
       </div>
-      <Footer />
-    </>
+      <div style={styles.filters}>
+                  {/* Price Range Filter */}
+                  <div style={styles.filterGroup}>
+          <label style={styles.label}>Price Range</label>
+          <div>
+            <input
+              type="range"
+              min="0"
+              max="5000000"
+              value={filters.minPrice}
+              onChange={(e) =>
+                handleFilterChange("minPrice", Number(e.target.value))
+              }
+              style={styles.input}
+            />
+            <span>
+              ${filters.minPrice.toLocaleString()} - $
+              {filters.maxPrice.toLocaleString()}
+            </span>
+          </div>
+        </div>
+      {/* Rating Filter */}
+      <div style={styles.filterGroup}>
+        <label style={styles.label}>Minimum Rating</label>
+        <input
+          type="range"
+          min="0"
+          max="5"
+          step="0.1"
+          value={filters.minRating}
+          onChange={(e) =>
+            handleFilterChange("minRating", Number(e.target.value))
+          }
+          style={styles.input}
+        />
+        <span>{filters.minRating} Stars</span>
+      </div>
+      </div>
+
+      {/* Properties Grid */}
+      <div style={styles.propertiesGrid}>
+        {filteredProperties.map((property) => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
+      </div>
+    </div>
   );
 };
 
