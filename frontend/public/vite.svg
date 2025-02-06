@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="90" fill="#4A90E2"/>
+  
+  <!-- Stylized house -->
+  <path d="M100 40 L160 90 L160 160 L40 160 L40 90 Z" fill="white"/>
+  
+  <!-- Door -->
+  <rect x="85" y="120" width="30" height="40" fill="#4A90E2"/>
+  
+  <!-- Window -->
+  <rect x="65" y="100" width="20" height="20" fill="#4A90E2"/>
+  <rect x="115" y="100" width="20" height="20" fill="#4A90E2"/>
+</svg>
